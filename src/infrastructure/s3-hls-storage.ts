@@ -9,7 +9,6 @@ export class S3HlsStorageManager implements IHlsStorageManager {
   private _logger: Logger;
 
   constructor() {
-    console.log(process.env);
     this._s3Client = new S3Client({
       region: process.env.AWS_REGION,
       credentials: {
