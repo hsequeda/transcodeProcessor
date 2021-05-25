@@ -11,4 +11,4 @@ RUN npm run build
 
 RUN  rm -r src
 
-CMD [ "npm", "npm" , "start:prod"  ]
+CMD [ "npm", "run" , "start:prod"  ]
