@@ -5,7 +5,7 @@ import { ITranscoder } from '../domain/interfaces/ITranscoder';
 import * as fs from 'fs';
 
 @Injectable()
-export class FfmpegTanscoder extends AggregateRoot implements ITranscoder {
+export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
   private readonly _ffmpeg: Ffmpeg.FfmpegCommand;
   private readonly _logger: Logger;
 
@@ -15,7 +15,7 @@ export class FfmpegTanscoder extends AggregateRoot implements ITranscoder {
     this._ffmpeg.setFfmpegPath(process.env.FFMPEG_PATH);
     this._ffmpeg.setFfprobePath(process.env.FFPROBE_PATH);
     this._ffmpeg.setFlvtoolPath(process.env.FLVTOOL_PATH);
-    this._logger = new Logger(FfmpegTanscoder.name);
+    this._logger = new Logger(FfmpegTranscoder.name);
   }
 
   async transcodeFile(fileAddress: string): Promise<void> {

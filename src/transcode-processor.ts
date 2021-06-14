@@ -5,7 +5,7 @@ import { IHlsStorageManager } from './domain/interfaces/IStorageManager';
 import { ITranscoder } from './domain/interfaces/ITranscoder';
 import { TranscodeJobDto } from './dtos';
 
-@Processor(process.env.QUEUE_NAME)
+@Processor(process.env.QUEUE_JOB_NAME)
 export class TranscodeProcessor {
   constructor(
     @Inject('ITranscoder')
