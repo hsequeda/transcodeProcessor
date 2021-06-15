@@ -5,16 +5,17 @@ import { IHlsStorageManager } from './domain/interfaces/IStorageManager';
 import { ITranscoder } from './domain/interfaces/ITranscoder';
 import { TranscodeJobDto } from './dtos';
 
-@Processor(process.env.QUEUE_JOB_NAME)
+@Processor(process.env.QUEUE_NAME)
 export class TranscodeProcessor {
   constructor(
     @Inject('ITranscoder')
     private readonly _transcoder: ITranscoder,
     @Inject('IHlsStorageManager')
     private readonly _hlsStorage: IHlsStorageManager,
-  ) {}
+  ) {
+  }
 
-  @Process(process.env.QUEUE_JOB_NAME)
+  @Process('transcoder-job')
   async process(job: Job<TranscodeJobDto>): Promise<void> {
     try {
       await this._transcoder.transcodeFile(job.data.urlOrigin);
