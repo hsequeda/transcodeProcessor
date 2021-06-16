@@ -12,10 +12,6 @@ import { S3HlsStorageManager } from './infrastructure/s3-hls-storage';
       useFactory: (): BullModuleOptions => {
         return {
           name: process.env.QUEUE_NAME,
-          defaultJobOptions: {
-            removeOnFail: true,
-            removeOnComplete: true,
-          },
           redis: {
             host: process.env.QUEUE_HOST,
             port: parseInt(process.env.QUEUE_PORT),
