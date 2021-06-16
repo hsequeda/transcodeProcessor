@@ -19,7 +19,6 @@ export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
   }
 
   async transcodeFile(fileAddress: string): Promise<void> {
-    this._logger.log(`Transcoding File ${fileAddress}`);
     this.freeOutputPath();
     return new Promise((resolve, reject) => {
       this._ffmpeg
@@ -30,10 +29,19 @@ export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
         .addOption('-hls_time', '30')
         .addOption('-hls_list_size', '0')
         .addOption('-f', 'hls')
+        .on('start', function(commandLine) {
+          this._logger.debug(`Transcoding File ${fileAddress}`);
+        })
+        .on('progress', function(progress) {
+          this._logger.log('Processing file: ${fileAddress} .....' + Math.abs(progress.percent) + '% done');
+        })
+
         .on('end', () => {
+          this._logger.debug(`Transcoding File ${fileAddress}, OK`);
           resolve();
         })
         .on('error', err => {
+          this._logger.error(`Error in file: ${fileAddress}, [ERROR]: ${err.toString()} `);
           reject(err);
         })
         .save(`${process.env.OUTPUT_PATH}/index.m3u8`);

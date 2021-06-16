@@ -15,7 +15,7 @@ export class TranscodeProcessor {
   ) {
   }
 
-  @Process('transcoder-job')
+  @Process()
   async process(job: Job<TranscodeJobDto>): Promise<void> {
     try {
       await this._transcoder.transcodeFile(job.data.urlOrigin);
@@ -28,5 +28,6 @@ export class TranscodeProcessor {
     } catch (error) {
       throw new Error(`[ StorageError ]: ${error.message}`);
     }
+
   }
 }
