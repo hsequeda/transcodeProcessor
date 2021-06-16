@@ -9,9 +9,10 @@ import { S3HlsStorageManager } from './infrastructure/s3-hls-storage';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     BullModule.registerQueueAsync({
+      name: 'transcode',
       useFactory: (): BullModuleOptions => {
         return {
-          name: process.env.QUEUE_NAME,
+          name: 'transcode',
           redis: {
             host: process.env.QUEUE_HOST,
             port: parseInt(process.env.QUEUE_PORT),
