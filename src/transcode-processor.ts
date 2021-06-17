@@ -7,7 +7,7 @@ import { TranscodeJobDto } from './dtos';
 
 @Processor({name: 'transcode'})
 export class TranscodeProcessor {
-  private readonly _logger: Logger;
+  private readonly _logger: Logger = new Logger(TranscodeProcessor.name);;
 
   constructor(
     @Inject('ITranscoder')
@@ -16,7 +16,6 @@ export class TranscodeProcessor {
     private readonly _hlsStorage: IHlsStorageManager,
 
   ) {
-    this._logger = new Logger(TranscodeProcessor.name);
   }
 
   @Process()
