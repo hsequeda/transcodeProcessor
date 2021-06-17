@@ -7,7 +7,6 @@ import * as fs from 'fs';
 @Injectable()
 export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
   private readonly _ffmpeg: Ffmpeg.FfmpegCommand;
-  private readonly _logger: Logger = new Logger(FfmpegTranscoder.name);;
 
   constructor() {
     super();
@@ -15,6 +14,7 @@ export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
     this._ffmpeg.setFfmpegPath(process.env.FFMPEG_PATH);
     this._ffmpeg.setFfprobePath(process.env.FFPROBE_PATH);
     this._ffmpeg.setFlvtoolPath(process.env.FLVTOOL_PATH);
+
   }
 
   async transcodeFile(fileAddress: string): Promise<void> {
@@ -29,18 +29,18 @@ export class FfmpegTranscoder extends AggregateRoot implements ITranscoder {
         .addOption('-hls_list_size', '0')
         .addOption('-f', 'hls')
         .on('start', function(commandLine) {
-          this._logger.debug(`Transcoding File ${fileAddress}`);
+          Logger.debug(`Transcoding File ${fileAddress}`, FfmpegTranscoder.name);
         })
         .on('progress', function(progress) {
-          this._logger.log('Processing file: ${fileAddress} .....' + Math.abs(progress.percent) + '% done');
+          Logger.log(`Processing file: ${fileAddress} .....'${Math.abs(progress.percent)} % done.`, FfmpegTranscoder.name);
         })
 
         .on('end', () => {
-          this._logger.debug(`Transcoding File ${fileAddress}, OK`);
+          Logger.debug(`Transcoding File ${fileAddress}, OK`, FfmpegTranscoder.name);
           resolve();
         })
         .on('error', err => {
-          this._logger.error(`Error in file: ${fileAddress}, [ERROR]: ${err.toString()} `);
+          Logger.error(`Error in file: ${fileAddress}, [ERROR]: ${err.toString()}`, FfmpegTranscoder.name);
           reject(err);
         })
         .save(`${process.env.OUTPUT_PATH}/index.m3u8`);
