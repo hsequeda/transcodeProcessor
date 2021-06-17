@@ -1,31 +1,41 @@
 import { Process, Processor } from '@nestjs/bull';
-import { Inject } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { IHlsStorageManager } from './domain/interfaces/IStorageManager';
 import { ITranscoder } from './domain/interfaces/ITranscoder';
 import { TranscodeJobDto } from './dtos';
 
-@Processor(process.env.QUEUE_NAME)
+@Processor({name: 'transcode'})
 export class TranscodeProcessor {
+  private readonly _logger: Logger;
+
   constructor(
     @Inject('ITranscoder')
     private readonly _transcoder: ITranscoder,
     @Inject('IHlsStorageManager')
     private readonly _hlsStorage: IHlsStorageManager,
-  ) {}
 
-  @Process(process.env.QUEUE_JOB_NAME)
+  ) {
+    this._logger = new Logger(TranscodeProcessor.name);
+  }
+
+  @Process()
   async process(job: Job<TranscodeJobDto>): Promise<void> {
     try {
       await this._transcoder.transcodeFile(job.data.urlOrigin);
     } catch (error) {
-      throw new Error(`[ TranscoderError ]: ${error.message}`);
+      const errMsg = `[ TranscoderError ]: ${error.message}`;
+      this._logger.error(errMsg)
+      throw new Error(errMsg);
     }
 
     try {
       await this._hlsStorage.uploadFiles(job.data.key);
     } catch (error) {
-      throw new Error(`[ StorageError ]: ${error.message}`);
+      const errMsg = `[ StorageError ]: ${error.message}`;
+      this._logger.error(errMsg);
+      throw new Error(errMsg);
     }
+
   }
 }
